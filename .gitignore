@@ -1,0 +1,14 @@
+# Android / Gradle
+.gradle/
+.kotlin/
+build/
+local.properties
+*.apk
+*.aab
+.idea/
+*.iml
+captures/
+
+# Веб-версия
+web/node_modules/
+web/dist/

@@ -1,0 +1,200 @@
+/* Цвета — из ui/Theme.kt Android-версии. */
+:root {
+  --primary: #7c9cf0;
+  --on-primary: #fff;
+  --primary-container: #dce5ff;
+  --on-primary-container: #2a2c3b;
+  --secondary: #e48aa9;
+  --secondary-container: #ffe4ec;
+  --on-secondary-container: #2a2c3b;
+  --tertiary: #b8e6d0;
+  --tertiary-ink: #3f8f6c;
+  --on-tertiary: #2a2c3b;
+  --bg: #fff6e9;
+  --surface: #fff;
+  --surface-variant: #edeff7;
+  --ink: #2a2c3b;
+  --muted: #5a5d6e;
+  --outline: #c9cde0;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #a8c0ff;
+    --on-primary: #1a2a5e;
+    --primary-container: #4a6bc4;
+    --on-primary-container: #dee6ff;
+    --secondary: #f7c8d8;
+    --secondary-container: #6b3549;
+    --on-secondary-container: #ffe4ec;
+    --tertiary: #b8e6d0;
+    --tertiary-ink: #b8e6d0;
+    --bg: #1a1b26;
+    --surface: #232432;
+    --surface-variant: #2e3040;
+    --ink: #e6e6f0;
+    --muted: #b9bcc9;
+    --outline: #4a4d60;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.4 -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, 'Segoe UI', sans-serif;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+
+#app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+h1 { font-size: 26px; font-weight: 700; margin: 0; }
+h2 { font-size: 20px; font-weight: 600; margin: 6px 0 0; }
+h3 { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0; }
+
+.muted { color: var(--muted); font-size: 14px; }
+.body { font-size: 16px; margin-top: 10px; }
+.accent { color: var(--primary); font-size: 14px; }
+.title { font-size: 16px; font-weight: 500; }
+.tiny { font-size: 12px; }
+.block { display: block; }
+.grow { flex: 1; min-width: 0; }
+.mt10 { margin-top: 10px; }
+.mt12 { margin-top: 12px; }
+.row { display: flex; align-items: center; }
+.gap8 { gap: 8px; }
+.gap12 { gap: 12px; }
+
+.top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+/* ---------- кнопки ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.1s, opacity 0.1s;
+}
+.btn:active, .feed-btn:active, .sound:active, .chip:active { transform: scale(0.97); opacity: 0.85; }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn.outline { border-color: var(--outline); color: var(--primary); }
+.btn.primary { background: var(--primary); color: var(--on-primary); }
+.btn.tertiary { background: var(--tertiary); color: var(--on-tertiary); }
+.btn.big { width: 100%; height: 56px; margin-top: 16px; font-size: 17px; }
+.btn.wide { flex: 1; height: 52px; }
+.btn.small { min-height: 34px; padding: 6px 12px; }
+.btn.small svg { width: 16px; height: 16px; }
+.btn.sq { width: 44px; padding: 0; font-size: 20px; }
+
+.link {
+  display: inline-flex; align-items: center; gap: 2px;
+  color: var(--primary); text-decoration: none; padding: 8px; font-size: 16px;
+}
+.link svg { width: 18px; height: 18px; }
+
+/* ---------- карточки ---------- */
+.card {
+  background: var(--surface);
+  border-radius: 24px;
+  padding: 20px;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.card-primary { background: var(--primary-container); color: var(--on-primary-container); }
+.card-primary .muted { color: inherit; opacity: 0.75; }
+.card-title { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; margin-bottom: 14px; }
+.ic svg { width: 28px; height: 28px; display: block; }
+.ic.primary { color: var(--primary); }
+.ic.secondary { color: var(--secondary); }
+
+.big-stat .value { font-size: 40px; font-weight: 700; color: var(--primary); line-height: 1.15; }
+
+.feed-row { display: flex; gap: 10px; margin-top: 16px; }
+.feed-btn {
+  flex: 1; height: 84px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border: none; border-radius: 18px;
+  background: var(--secondary-container); color: var(--on-secondary-container);
+  font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; touch-action: manipulation;
+}
+
+/* ---------- история ---------- */
+.events { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.event { display: flex; align-items: center; gap: 12px; }
+.dot {
+  width: 38px; height: 38px; flex: none; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.dot svg { width: 20px; height: 20px; }
+.dot.primary { color: var(--primary); background: color-mix(in srgb, var(--primary) 18%, transparent); }
+.dot.secondary { color: var(--secondary); background: color-mix(in srgb, var(--secondary) 18%, transparent); }
+.dot.tertiary { color: var(--tertiary-ink); background: color-mix(in srgb, var(--tertiary) 35%, transparent); }
+
+/* ---------- звуки ---------- */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: -6px; }
+.chip {
+  border: 1px solid var(--outline); border-radius: 10px; background: none; color: var(--ink);
+  padding: 8px 12px; font: inherit; font-size: 14px; cursor: pointer; touch-action: manipulation;
+}
+.chip.on { background: var(--primary-container); color: var(--on-primary-container); border-color: transparent; font-weight: 600; }
+.sound { display: flex; align-items: center; gap: 14px; padding: 18px; border-radius: 20px; width: 100%; cursor: pointer; }
+.sound-ic {
+  width: 46px; height: 46px; flex: none; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--primary); background: color-mix(in srgb, var(--primary) 16%, transparent);
+}
+.small-note { font-size: 13px; }
+
+/* ---------- неделя ---------- */
+.mini { padding: 16px; border-radius: 18px; font-size: 14px; }
+.mini .value { font-size: 26px; font-weight: 700; margin-top: 4px; }
+.day { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; }
+.day-name { width: 40px; display: flex; flex-direction: column; }
+.day-name b { font-size: 20px; }
+.bar { flex: 1; height: 20px; border-radius: 10px; background: var(--surface-variant); overflow: hidden; }
+.bar div { height: 100%; border-radius: 10px; background: var(--primary); }
+.day-val { width: 84px; text-align: right; }
+
+/* ---------- настройки ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; font-size: 14px; color: var(--muted); }
+.field input {
+  font: inherit; font-size: 16px; /* 16px — чтобы iPhone не зумил поле */
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--outline); border-radius: 12px;
+  padding: 12px; min-height: 48px; width: 100%;
+  -webkit-appearance: none; appearance: none;
+}
+.stepper { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+.stepper + .btn { margin-top: 8px; }
+.footnote { padding: 8px 0; }
