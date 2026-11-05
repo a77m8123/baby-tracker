@@ -1,8 +1,16 @@
 // Офлайн-режим: сначала сеть (чтобы сразу получать новые версии), без сети — из кэша.
-const CACHE = 'malysh-v1';
+const CACHE = 'malysh-wasm-v1';
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+
+// Удаляем кэши прежних версий (в том числе старой веб-версии на TypeScript)
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
