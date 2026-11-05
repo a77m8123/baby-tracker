@@ -1,5 +1,6 @@
 # Собирает веб-версию (Kotlin/Wasm, модуль webApp) и выкладывает на GitHub Pages.
 # Один раз: Settings → Pages → Source: GitHub Actions.
+# Если публикация «зависла» и новые отклоняются: переключить Source на «Deploy from a branch» и обратно.
 name: Веб-версия
 
 on:
