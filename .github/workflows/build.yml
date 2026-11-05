@@ -56,7 +56,12 @@ jobs:
       - name: Собрать Shared.framework (Kotlin)
         run: |
           chmod +x gradlew
-          ./gradlew :shared:linkReleaseFrameworkIosArm64 --no-daemon
+          # ошибки компиляции дублируем в аннотации — их видно на странице сборки без входа в GitHub
+          set -o pipefail
+          ./gradlew :shared:linkReleaseFrameworkIosArm64 --no-daemon 2>&1 | tee kotlin.log || {
+            grep -E '^e: ' kotlin.log | head -40 | sed 's/^/::error::/'
+            exit 1
+          }
 
       - name: Сгенерировать Xcode-проект
         run: |
@@ -65,6 +70,7 @@ jobs:
 
       - name: Собрать приложение
         run: |
+          set -o pipefail
           xcodebuild \
             -project iosApp/iosApp.xcodeproj \
             -scheme iosApp \
@@ -75,7 +81,10 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            build
+            build 2>&1 | tee xcode.log || {
+            grep -E 'error:' xcode.log | sort -u | head -40 | sed 's/^/::error::/'
+            exit 1
+          }
 
       # AltStore переподписывает приложение своим сертификатом, но права (app group для виджета)
       # берёт из исходной подписи — поэтому подписываем «пустой» ad-hoc подписью с entitlements.

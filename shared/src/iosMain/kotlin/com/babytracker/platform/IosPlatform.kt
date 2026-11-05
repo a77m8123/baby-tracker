@@ -68,7 +68,7 @@ class IosPlatform(private val bridge: IosBridge) : Platform {
             val content = UNMutableNotificationContent()
             content.setTitle(r.title)
             content.setBody(r.text)
-            content.setSound(UNNotificationSound.defaultSound())
+            content.setSound(UNNotificationSound.defaultSound)
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(seconds, repeats = false)
             val request = UNNotificationRequest.requestWithIdentifier("reminder-${r.id}", content, trigger)
             center.addNotificationRequest(request, withCompletionHandler = null)
