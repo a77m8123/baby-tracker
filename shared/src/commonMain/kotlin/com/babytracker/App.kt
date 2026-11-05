@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,9 +68,14 @@ private enum class Tab(val title: String, val glyph: Glyph) {
     More("Ещё", Glyph.Gear),
 }
 
-/** Общая точка входа для Android и iOS. */
+/** Общая точка входа для Android, iOS и веб-версии. [fontFamily] задаёт только веб — там нет системных шрифтов. */
 @Composable
-fun App(store: BabyStore, platform: Platform, onThemeChange: (dark: Boolean) -> Unit = {}) {
+fun App(
+    store: BabyStore,
+    platform: Platform,
+    onThemeChange: (dark: Boolean) -> Unit = {},
+    fontFamily: FontFamily? = null,
+) {
     val colors = resolveColors(store)
     LaunchedEffect(colors.isDark) { onThemeChange(colors.isDark) }
 
@@ -81,7 +87,7 @@ fun App(store: BabyStore, platform: Platform, onThemeChange: (dark: Boolean) -> 
         platform.sync(store.data, nowMs())
     }
 
-    BabyTheme(colors) {
+    BabyTheme(colors, fontFamily) {
         val c = Baby.colors
         var tab by rememberSaveable { mutableStateOf(Tab.Home) }
         var sheet by remember { mutableStateOf<Sheet?>(null) }

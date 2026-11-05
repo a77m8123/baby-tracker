@@ -1,10 +1,11 @@
 # Малыш — трекер для новорождённого
 
-Приложение для iPhone и Android: сон, кормление, подгузники, звуки для засыпания,
+Приложение для iPhone, Android и браузера: сон, кормление, подгузники, звуки для засыпания,
 рост и вес по ВОЗ, лекарства и прививки. Всё офлайн, данные только на телефоне.
 
-Код на Kotlin Multiplatform: логика и весь интерфейс (Compose Multiplatform) общие,
+Код на Kotlin Multiplatform: логика и весь интерфейс (Compose Multiplatform) общие для всех трёх,
 по-своему на каждой платформе только уведомления, фоновый звук, виджет и работа с файлами.
+Веб-версия — тот же код, собранный в Kotlin/Wasm: https://a77m8123.github.io/baby-tracker/
 
 ## Что умеет
 
@@ -49,8 +50,8 @@
 | `shared/src/androidMain`, `iosMain` | хранилище (SharedPreferences / NSUserDefaults), iOS-платформа: уведомления, звук |
 | `androidApp/` | Activity, будильники, сервис звука, виджет, PDF, «Поделиться» |
 | `iosApp/` | SwiftUI-обёртка, `AppBridge` (виджет, Live Activity, PDF, файлы), расширение `BabyWidget` |
+| `webApp/` | веб-версия (Kotlin/Wasm): localStorage, Web Audio, уведомления браузера, печать отчёта |
 | `site/` | сайт со ссылками на скачивание (для Vercel) |
-| `web/` | старая веб-версия — удалим, когда проверим приложения |
 
 ## Сборка
 
@@ -61,8 +62,20 @@ GitHub Actions (`.github/workflows/build.yml`) на каждый push в `main`:
 - https://github.com/a77m8123/baby-tracker/releases/latest/download/Malysh.apk
 - https://github.com/a77m8123/baby-tracker/releases/latest/download/Malysh.ipa
 
+Веб-версию собирает `.github/workflows/web.yml` и выкладывает на GitHub Pages
+(один раз: Settings → Pages → Source: **GitHub Actions**). Локально:
+`.\gradlew :webApp:wasmJsBrowserDistribution` → `webApp/build/dist/wasmJs/productionExecutable`
+(открывать через любой локальный сервер, например `python -m http.server`).
+
 APK локально (нужны JDK 17 и Android SDK 35): `.\build-apk.ps1`.
 Тесты локально из папки с кириллицей в пути не запускаются — они идут в Actions.
+
+## Веб-версия: ограничения
+
+- Данные в браузере этого устройства (localStorage); копию можно сохранить и восстановить в «Ещё».
+- Напоминания — только пока вкладка открыта; виджетов нет.
+- PDF-отчёт открывается в окне печати — там «Сохранить как PDF».
+- Звук при заблокированном экране iPhone может прерываться.
 
 ## Установка на iPhone
 

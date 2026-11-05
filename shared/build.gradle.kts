@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -21,6 +22,12 @@ kotlin {
             baseName = "Shared"
             isStatic = true
         }
+    }
+
+    // Веб-версия: тот же интерфейс в браузере через Kotlin/Wasm (модуль webApp)
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
     }
 
     sourceSets {

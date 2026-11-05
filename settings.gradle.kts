@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // без FAIL_ON_PROJECT_REPOS: Kotlin/Wasm сам добавляет репозитории для Node.js и Yarn
     repositories {
         google()
         mavenCentral()
@@ -23,3 +23,4 @@ dependencyResolutionManagement {
 rootProject.name = "BabyTracker"
 include(":shared")
 include(":androidApp")
+include(":webApp")

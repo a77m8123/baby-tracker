@@ -117,7 +117,7 @@ fun MoreScreen(store: BabyStore, platform: Platform, openProfile: () -> Unit, to
             PrimaryButton("PDF-отчёт", c.sleep, {
                 val time = nowMs()
                 runCatching { platform.renderPdf(Report.pdf(store.data, reportDays, time)) }
-                    .onSuccess { platform.shareFile("malysh-otchet-${localDate(time)}.pdf", "application/pdf", it) }
+                    .onSuccess { if (it.isNotEmpty()) platform.shareFile("malysh-otchet-${localDate(time)}.pdf", "application/pdf", it) }
                     .onFailure { toast("Не получилось собрать PDF") }
             }, Modifier.fillMaxWidth(), glyph = Glyph.Doc)
             Spacer(Modifier.height(8.dp))

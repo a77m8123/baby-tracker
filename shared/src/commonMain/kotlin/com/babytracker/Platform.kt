@@ -31,6 +31,7 @@ interface Platform {
     /** Выбрать текстовый файл (резервную копию). null — пользователь передумал. */
     fun pickTextFile(onResult: (String?) -> Unit)
 
+    /** Пустой массив — платформа показала отчёт сама (в браузере — окно печати, где можно сохранить PDF). */
     fun renderPdf(pages: List<PdfPage>): ByteArray
 }
 

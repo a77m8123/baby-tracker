@@ -11,6 +11,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -119,8 +120,22 @@ private val AppTypography = Typography(
     labelLarge = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
 )
 
+/** В браузере системных шрифтов нет — веб-версия передаёт свой (с кириллицей) во все стили. */
+private fun typography(fontFamily: FontFamily?): Typography {
+    if (fontFamily == null) return AppTypography
+    val t = AppTypography
+    fun TextStyle.f() = copy(fontFamily = fontFamily)
+    return Typography(
+        displayLarge = t.displayLarge.f(), displayMedium = t.displayMedium.f(), displaySmall = t.displaySmall.f(),
+        headlineLarge = t.headlineLarge.f(), headlineMedium = t.headlineMedium.f(), headlineSmall = t.headlineSmall.f(),
+        titleLarge = t.titleLarge.f(), titleMedium = t.titleMedium.f(), titleSmall = t.titleSmall.f(),
+        bodyLarge = t.bodyLarge.f(), bodyMedium = t.bodyMedium.f(), bodySmall = t.bodySmall.f(),
+        labelLarge = t.labelLarge.f(), labelMedium = t.labelMedium.f(), labelSmall = t.labelSmall.f(),
+    )
+}
+
 @Composable
-fun BabyTheme(colors: BabyColors, content: @Composable () -> Unit) {
+fun BabyTheme(colors: BabyColors, fontFamily: FontFamily? = null, content: @Composable () -> Unit) {
     val scheme = if (colors.isDark) {
         darkColorScheme(
             primary = colors.sleep, onPrimary = colors.onAccent,
@@ -145,6 +160,6 @@ fun BabyTheme(colors: BabyColors, content: @Composable () -> Unit) {
         )
     }
     CompositionLocalProvider(LocalBabyColors provides colors) {
-        MaterialTheme(colorScheme = scheme, typography = AppTypography, content = content)
+        MaterialTheme(colorScheme = scheme, typography = typography(fontFamily), content = content)
     }
 }
