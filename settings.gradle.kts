@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "BabyTracker"
-include(":app")
+include(":shared")
+include(":androidApp")

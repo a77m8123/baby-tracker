@@ -1,0 +1,121 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['site/**', 'web/**', '**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    name: Android APK + тесты
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Тесты и сборка APK
+        run: |
+          chmod +x gradlew
+          ./gradlew :shared:testDebugUnitTest :androidApp:assembleDebug --no-daemon
+          cp androidApp/build/outputs/apk/debug/androidApp-debug.apk Malysh.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Malysh-apk
+          path: Malysh.apk
+
+  ios:
+    name: iOS IPA (для AltStore)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Выбрать Xcode 16
+        run: |
+          for v in 16.4 16.3 16.2; do
+            if [ -d "/Applications/Xcode_$v.app" ]; then
+              sudo xcode-select -s "/Applications/Xcode_$v.app"
+              break
+            fi
+          done
+          xcodebuild -version
+
+      - name: Собрать Shared.framework (Kotlin)
+        run: |
+          chmod +x gradlew
+          ./gradlew :shared:linkReleaseFrameworkIosArm64 --no-daemon
+
+      - name: Сгенерировать Xcode-проект
+        run: |
+          brew install xcodegen
+          cd iosApp && xcodegen generate
+
+      - name: Собрать приложение
+        run: |
+          xcodebuild \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/ios \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      # AltStore переподписывает приложение своим сертификатом, но права (app group для виджета)
+      # берёт из исходной подписи — поэтому подписываем «пустой» ad-hoc подписью с entitlements.
+      - name: Подписать ad-hoc с app group
+        run: |
+          APP=build/ios/Build/Products/Release-iphoneos/Malysh.app
+          ls "$APP/PlugIns"
+          codesign --force --sign - --entitlements iosApp/BabyWidget/BabyWidget.entitlements "$APP/PlugIns/BabyWidget.appex"
+          codesign --force --sign - --entitlements iosApp/iosApp/iosApp.entitlements "$APP"
+          codesign -d --entitlements - "$APP"
+
+      - name: Упаковать IPA
+        run: |
+          mkdir -p build/ipa/Payload
+          cp -R build/ios/Build/Products/Release-iphoneos/Malysh.app build/ipa/Payload/
+          cd build/ipa && zip -qry ../../Malysh.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Malysh-ipa
+          path: Malysh.ipa
+
+  release:
+    name: Релиз со ссылками для скачивания
+    needs: [android, ios]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      # Имена файлов постоянные — сайт ссылается на releases/latest/download/Malysh.apk и Malysh.ipa
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Малыш, сборка ${{ github.run_number }}
+          make_latest: true
+          body: |
+            **iPhone:** скачай `Malysh.ipa` и открой через AltStore → My Apps → «+».
+            **Android:** скачай `Malysh.apk` и установи.
+          files: |
+            dist/Malysh.ipa
+            dist/Malysh.apk

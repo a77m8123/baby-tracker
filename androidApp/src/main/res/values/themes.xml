@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Malysh" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+
+    <color name="background">#F7F3EE</color>
+    <color name="ic_launcher_background">#2B2550</color>
+    <color name="widget_bg">#F21B1B28</color>
+    <color name="widget_accent">#A99CFF</color>
+</resources>

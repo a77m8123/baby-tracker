@@ -1,0 +1,48 @@
+# XcodeGen-описание проекта. Сам .xcodeproj генерируется в CI командой `xcodegen generate`,
+# поэтому в репозитории его нет. Перед сборкой Gradle кладёт Shared.framework в shared/build.
+# Подпись (с app group для виджета) делается уже после сборки — см. .github/workflows/build.yml.
+name: iosApp
+options:
+  bundleIdPrefix: com.babytracker
+  deploymentTarget:
+    iOS: "15.0"
+settings:
+  base:
+    MARKETING_VERSION: "2.0"
+    CURRENT_PROJECT_VERSION: "2"
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: iosApp
+      - path: Common
+    dependencies:
+      - target: BabyWidget
+    scheme: {}
+    settings:
+      base:
+        PRODUCT_NAME: Malysh
+        PRODUCT_BUNDLE_IDENTIFIER: com.babytracker.app
+        INFOPLIST_FILE: iosApp/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/../shared/build/bin/iosArm64/releaseFramework"
+        OTHER_LDFLAGS: "$(inherited) -framework Shared"
+
+  # Виджет и Live Activity. Нужен iOS 16.1; на iOS 15 приложение работает без них.
+  BabyWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "16.1"
+    sources:
+      - path: BabyWidget
+      - path: Common
+    settings:
+      base:
+        PRODUCT_NAME: BabyWidget
+        PRODUCT_BUNDLE_IDENTIFIER: com.babytracker.app.widget
+        INFOPLIST_FILE: BabyWidget/Info.plist
+        SKIP_INSTALL: YES

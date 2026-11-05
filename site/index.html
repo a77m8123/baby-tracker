@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Малыш — трекер сна и кормления</title>
+  <meta name="description" content="Сон, кормление, подгузники, звуки для засыпания, рост и прививки. Бесплатно, офлайн, данные только на телефоне.">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+    :root {
+      --bg: #F7F3EE; --card: #FFFFFF; --soft: #F1ECE6; --border: #E9E2D9;
+      --text: #2B2A35; --muted: #7D7888;
+      --sleep: #6E62D0; --feed: #E9794B; --diaper: #1F9C8F; --health: #D9577A; --sound: #3F86D4;
+      --on-accent: #FFFFFF;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #11111B; --card: #1B1B28; --soft: #242435; --border: #2E2E43;
+        --text: #EDEBF5; --muted: #9C99B0;
+        --sleep: #A99CFF; --feed: #FFA67C; --diaper: #52D1C1; --health: #FF8EAA; --sound: #7DB6F5;
+        --on-accent: #15131F;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+    header { padding: 56px 0 32px; display: grid; gap: 28px; align-items: center; }
+    @media (min-width: 760px) { header { grid-template-columns: 1.2fr 1fr; padding-top: 80px; } }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; color: var(--sleep); }
+    .brand img { width: 44px; height: 44px; border-radius: 12px; }
+    h1 { font-size: clamp(34px, 6vw, 52px); line-height: 1.08; margin: 18px 0 14px; letter-spacing: -0.02em; }
+    .lead { color: var(--muted); font-size: 18px; margin: 0 0 26px; max-width: 34em; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 999px;
+      font-weight: 600; text-decoration: none; border: 0; cursor: pointer; font-size: 16px;
+    }
+    .btn.primary { background: var(--sleep); color: var(--on-accent); }
+    .btn.secondary { background: color-mix(in srgb, var(--sleep) 14%, transparent); color: var(--sleep); }
+    .note { color: var(--muted); font-size: 13px; margin-top: 12px; }
+
+    /* макет экрана приложения */
+    .phone {
+      justify-self: center; width: min(300px, 100%); background: var(--bg); border: 10px solid var(--text);
+      border-radius: 44px; padding: 22px 14px; box-shadow: 0 30px 60px -30px rgba(40, 30, 80, .45);
+    }
+    .phone h3 { margin: 4px 6px 0; font-size: 24px; }
+    .phone .age { margin: 0 6px 12px; color: var(--muted); font-size: 13px; }
+    .card { background: var(--card); border-radius: 22px; padding: 14px; margin-bottom: 10px; border: 1px solid var(--border); }
+    .hero { display: flex; gap: 14px; align-items: center; background: color-mix(in srgb, var(--sleep) 13%, var(--card)); border: 0; }
+    .ring { width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; flex: none;
+      background: conic-gradient(var(--sleep) 0 64%, var(--soft) 64% 100%); }
+    .ring span { width: 58px; height: 58px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+    .hero b { color: var(--sleep); font-size: 20px; display: block; }
+    .hero small { color: var(--muted); }
+    .pill { margin-top: 8px; background: var(--sleep); color: var(--on-accent); border-radius: 999px; text-align: center; padding: 7px; font-weight: 600; font-size: 13px; }
+    .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tile { border-radius: 18px; padding: 12px; font-weight: 600; font-size: 14px; }
+    .tile i { display: block; width: 26px; height: 26px; border-radius: 50%; margin-bottom: 8px; }
+    .t-feed { background: color-mix(in srgb, var(--feed) 14%, transparent); } .t-feed i { background: var(--feed); }
+    .t-bottle { background: color-mix(in srgb, var(--feed) 14%, transparent); } .t-bottle i { background: var(--feed); }
+    .t-food { background: color-mix(in srgb, var(--health) 14%, transparent); } .t-food i { background: var(--health); }
+    .t-diaper { background: color-mix(in srgb, var(--diaper) 14%, transparent); } .t-diaper i { background: var(--diaper); }
+
+    section { padding: 36px 0; }
+    h2 { font-size: 28px; margin: 0 0 18px; letter-spacing: -0.01em; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .feature { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px; }
+    .feature .dot { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; margin-bottom: 12px; font-size: 20px; }
+    .feature h3 { margin: 0 0 6px; font-size: 18px; }
+    .feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .install { display: grid; gap: 12px; }
+    @media (min-width: 760px) { .install { grid-template-columns: 1fr 1fr; } }
+    .install .feature ol { margin: 8px 0 16px; padding-left: 20px; color: var(--muted); }
+    .install .feature li { margin-bottom: 6px; }
+    a { color: var(--sleep); }
+    footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="brand"><img src="icon.png" alt="">Малыш</div>
+        <h1>Спокойные дни и ночи с новорождённым</h1>
+        <p class="lead">Сон, кормление, подгузники, звуки для засыпания, рост и прививки — в одном простом приложении. Без регистрации и рекламы, работает офлайн, данные остаются на вашем телефоне.</p>
+        <div class="buttons">
+          <a class="btn primary" href="https://github.com/a77m8123/baby-tracker/releases/latest/download/Malysh.apk">Скачать для Android</a>
+          <a class="btn secondary" href="#iphone">Установить на iPhone</a>
+        </div>
+        <p class="note">Android 8 и новее · iPhone с iOS 15 и новее (виджет и Live Activity — с iOS 16.1)</p>
+      </div>
+      <div class="phone" aria-hidden="true">
+        <h3>Аня</h3>
+        <p class="age">2 месяца 5 дней</p>
+        <div class="card hero">
+          <div class="ring"><span>0:58</span></div>
+          <div><b>Спит</b><small>уснула в 13:05</small><div class="pill">Проснулась</div></div>
+        </div>
+        <div class="card"><small style="color:var(--muted)">Кормили 2 ч назад · следующее ≈ 15:20</small></div>
+        <div class="tiles">
+          <div class="tile t-feed"><i></i>Грудь</div>
+          <div class="tile t-bottle"><i></i>Бутылочка</div>
+          <div class="tile t-food"><i></i>Прикорм</div>
+          <div class="tile t-diaper"><i></i>Подгузник</div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <h2>Что умеет</h2>
+      <div class="grid">
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--sleep) 15%,transparent)">🌙</div>
+          <h3>Сон и окна бодрствования</h3><p>Таймер сна одной кнопкой. Подскажет, когда укладывать, по окну бодрствования для возраста, и напомнит.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--feed) 15%,transparent)">🍼</div>
+          <h3>Кормление</h3><p>Секундомер для левой и правой груди, «с какой начинать», бутылочка в мл, прикорм. Напоминание о следующем кормлении.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--diaper) 15%,transparent)">✨</div>
+          <h3>Подгузники</h3><p>Мокрый, грязный или оба — одно касание. Сводка за день и неделю.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--sound) 15%,transparent)">🎵</div>
+          <h3>Звуки для засыпания</h3><p>Белый шум, сердцебиение, фен, дождь, волны, колыбельная. Играют в фоне и плавно затихают по таймеру.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--health) 15%,transparent)">📈</div>
+          <h3>Рост и вес по ВОЗ</h3><p>График с коридором нормы ВОЗ для мальчиков и девочек от рождения до двух лет.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--health) 15%,transparent)">💊</div>
+          <h3>Лекарства и прививки</h3><p>Когда давали и когда можно снова. Календарь прививок с напоминанием накануне.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--sleep) 15%,transparent)">📄</div>
+          <h3>Отчёт для педиатра</h3><p>PDF со сводкой по дням, ростом, лекарствами и прививками. Таблица для Excel и резервная копия.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--feed) 15%,transparent)">🌒</div>
+          <h3>Ночной режим</h3><p>Тёплые тёмно-красные цвета без синего света — не слепит на ночном кормлении.</p></div>
+        <div class="feature"><div class="dot" style="background:color-mix(in srgb,var(--sleep) 15%,transparent)">📱</div>
+          <h3>Виджет</h3><p>Сон и кормление на экране «Домой». На iPhone — таймер на экране блокировки и в Dynamic Island.</p></div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2>Установка</h2>
+      <div class="install">
+        <div class="feature" id="android">
+          <h3>Android</h3>
+          <ol>
+            <li>Скачайте файл <b>Malysh.apk</b>.</li>
+            <li>Откройте его и разрешите установку из этого источника, если телефон спросит.</li>
+            <li>Разрешите уведомления — для напоминаний о кормлении и сне.</li>
+          </ol>
+          <a class="btn primary" href="https://github.com/a77m8123/baby-tracker/releases/latest/download/Malysh.apk">Скачать APK</a>
+        </div>
+        <div class="feature" id="iphone">
+          <h3>iPhone</h3>
+          <ol>
+            <li>Установите <a href="https://altstore.io">AltStore</a> по инструкции на их сайте (нужен компьютер один раз).</li>
+            <li>Скачайте <b>Malysh.ipa</b> на iPhone.</li>
+            <li>AltStore → My Apps → «+» → выберите файл.</li>
+            <li>Раз в 7 дней AltStore продлевает приложение сам, когда iPhone и компьютер в одной Wi-Fi.</li>
+          </ol>
+          <a class="btn primary" href="https://github.com/a77m8123/baby-tracker/releases/latest/download/Malysh.ipa">Скачать IPA</a>
+          <p class="note">С бесплатным Apple ID можно держать 3 приложения из AltStore. Виджет занимает ещё один слот — если их не хватает, AltStore предложит установить без виджета.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Малыш — бесплатное приложение без рекламы. Данные не уходят на сервер. Нормы — общие ориентиры ВОЗ и педиатров, не замена консультации врача.
+      · <a href="https://github.com/a77m8123/baby-tracker/releases">Все версии</a>
+    </footer>
+  </div>
+</body>
+</html>

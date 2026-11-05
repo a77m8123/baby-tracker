@@ -8,7 +8,12 @@ local.properties
 .idea/
 *.iml
 captures/
+.DS_Store
 
-# Веб-версия
+# Генерируется XcodeGen из iosApp/project.yml
+iosApp/iosApp.xcodeproj/
+
+# Веб-версия и сайт
 web/node_modules/
 web/dist/
+site/.vercel/

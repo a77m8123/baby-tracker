@@ -12,6 +12,6 @@ $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
 $env:PATH = "$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:PATH"
 
 Set-Location $PSScriptRoot
-& "$PSScriptRoot\gradlew.bat" --console=plain :app:assembleDebug
+& "$PSScriptRoot\gradlew.bat" --console=plain :androidApp:assembleDebug
 Write-Host ""
-Write-Host "APK: $PSScriptRoot\app\build\outputs\apk\debug\app-debug.apk"
+Write-Host "APK: $PSScriptRoot\androidApp\build\outputs\apk\debug\androidApp-debug.apk"
